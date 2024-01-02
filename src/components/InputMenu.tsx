@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, type PropsWithChildren } from "react";
 import browser, { search } from "webextension-polyfill";
 import styled from "styled-components";
 import { useTheme, hoverEffect } from "~utils/theme";
@@ -9,6 +9,8 @@ import mastercard from "url:/assets/ecosystem/mastercard.svg";
 import visa from "url:/assets/ecosystem/visa.svg";
 import supportedCurrencies from "~utils/supported_currencies";
 import { getPaymentTypes } from "~lib/onramper";
+import { motion, type Variants } from "framer-motion";
+import { type HistoryAction } from "~utils/hash_router";
 
 interface InputMenuProps {
   onPaymentMethodChange?: (methodId: string) => void;
@@ -114,103 +116,159 @@ export default function InputMenu({
       option.text.toLowerCase().includes(searchInput.toLowerCase())
   );
 
+  const PageTransition = ({
+    children,
+    action
+  }: PropsWithChildren<{ action: HistoryAction }>) => {
+    const transition = { ease: [0.42, 0, 0.58, 1], duration: 0.27 };
+    const pageAnimation: Variants = {
+      enter: {
+        y: 0,
+        transition,
+        ...(action === "push"
+          ? {
+              right: 0,
+              left: 0,
+              bottom: 0
+            }
+          : {})
+      },
+      initial: {
+        y: action === "push" ? "100%" : "-25%",
+        transition,
+        ...(action === "push"
+          ? {
+              right: 0,
+              left: 0,
+              bottom: 0
+            }
+          : {})
+      },
+      exit: {
+        y: action === "pop" ? "100%" : "-10%",
+        zIndex: action === "pop" ? 1 : -1,
+        transition,
+        ...(action === "pop"
+          ? {
+              right: 0,
+              left: 0,
+              bottom: 0
+            }
+          : {})
+      }
+    };
+
+    return (
+      <motion.div
+        initial="initial"
+        animate="enter"
+        exit="exit"
+        variants={pageAnimation}
+      >
+        {children}
+      </motion.div>
+    );
+  };
+
   const OptionModal = () => (
     <Wrapper displayTheme={theme}>
-      <Content displayTheme={theme}>
-        <Header>
-          <Title>
-            {isPaymentMethod
-              ? browser.i18n.getMessage("choose_payment_method")
-              : browser.i18n.getMessage("choose_fiat_currency")}
-          </Title>
-          <BackWrapper>
-            <ExitIcon
-              onClick={() => {
-                if (isPaymentMethod) {
-                  setChooseOption(false);
-                } else {
-                  onFiatCurrencyChange(chosenOption.id);
-                }
-              }}
-            />
-          </BackWrapper>
-        </Header>
-        {!isPaymentMethod && (
-          <SearchWrapper displayTheme={theme}>
-            <InputSearchIcon />
-            <SearchInput
-              displayTheme={theme}
-              placeholder={browser.i18n.getMessage(
-                "search_currency_placeholder"
-              )}
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-            />
-          </SearchWrapper>
-        )}
-        <OptionsContainer>
-          {!searchInput &&
-            options.map((option) => (
-              <Option
-                key={option.id}
-                displayTheme={theme}
-                active={chosenOption.id === option.id}
+      <PageTransition action="push">
+        <Content displayTheme={theme}>
+          <Header>
+            <Title>
+              {isPaymentMethod
+                ? browser.i18n.getMessage("choose_payment_method")
+                : browser.i18n.getMessage("choose_fiat_currency")}
+            </Title>
+            <BackWrapper>
+              <ExitIcon
                 onClick={() => {
-                  setChosenOption(option);
-                  setChooseOption(false);
                   if (isPaymentMethod) {
-                    onPaymentMethodChange(option.id);
+                    setChooseOption(false);
                   } else {
-                    onFiatCurrencyChange(option.id);
+                    onFiatCurrencyChange(chosenOption.id);
                   }
                 }}
-              >
-                <OptionIcon
-                  src={option.logo}
-                  alt={option.text}
-                  draggable={false}
-                />
-                {isPaymentMethod && option.text}
-                {!isPaymentMethod && (
+              />
+            </BackWrapper>
+          </Header>
+          {!isPaymentMethod && (
+            <SearchWrapper displayTheme={theme}>
+              <InputSearchIcon />
+              <SearchInput
+                displayTheme={theme}
+                placeholder={browser.i18n.getMessage(
+                  "search_currency_placeholder"
+                )}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+              />
+            </SearchWrapper>
+          )}
+          <OptionsContainer>
+            {!searchInput &&
+              options.map((option) => (
+                <Option
+                  key={option.id}
+                  displayTheme={theme}
+                  active={chosenOption.id === option.id}
+                  onClick={() => {
+                    setChosenOption(option);
+                    setChooseOption(false);
+                    if (isPaymentMethod) {
+                      onPaymentMethodChange(option.id);
+                    } else {
+                      onFiatCurrencyChange(option.id);
+                    }
+                  }}
+                >
+                  <OptionIcon
+                    src={option.logo}
+                    alt={option.text}
+                    draggable={false}
+                  />
+                  {isPaymentMethod && option.text}
+                  {!isPaymentMethod && (
+                    <OptionText>
+                      {option.id.toLocaleUpperCase()}
+                      <CurrencyName>{option.text}</CurrencyName>
+                    </OptionText>
+                  )}
+                  {isPaymentMethod && option.id === "creditcard" && (
+                    <>
+                      <CreditIcon src={visa} alt="visa" />
+                      <CreditIcon src={mastercard} alt="mastercard" />
+                      <CreditIcon src={amex} alt="american express" />
+                    </>
+                  )}
+                </Option>
+              ))}
+            {searchInput &&
+              filteredOptions.map((option) => (
+                <Option
+                  key={option.id}
+                  displayTheme={theme}
+                  active={chosenOption.id === option.id}
+                  onClick={() => {
+                    setChosenOption(option);
+                    setChooseOption(false);
+                    onFiatCurrencyChange(option.id);
+                  }}
+                >
+                  <OptionIcon
+                    src={option.logo}
+                    alt={option.text}
+                    draggable={false}
+                  />
                   <OptionText>
                     {option.id.toLocaleUpperCase()}
                     <CurrencyName>{option.text}</CurrencyName>
                   </OptionText>
-                )}
-                {isPaymentMethod && option.id === "creditcard" && (
-                  <>
-                    <CreditIcon src={visa} alt="visa" />
-                    <CreditIcon src={mastercard} alt="mastercard" />
-                    <CreditIcon src={amex} alt="american express" />
-                  </>
-                )}
-              </Option>
-            ))}
-          {searchInput &&
-            filteredOptions.map((option) => (
-              <Option
-                key={option.id}
-                displayTheme={theme}
-                active={chosenOption.id === option.id}
-                onClick={() => {
-                  setChosenOption(option);
-                  setChooseOption(false);
-                  onFiatCurrencyChange(option.id);
-                }}
-              >
-                <OptionIcon
-                  src={option.logo}
-                  alt={option.text}
-                  draggable={false}
-                />
-                <OptionText>
-                  {option.id.toLocaleUpperCase()}
-                  <CurrencyName>{option.text}</CurrencyName>
-                </OptionText>
-              </Option>
-            ))}
-        </OptionsContainer>
-      </Content>
+                </Option>
+              ))}
+          </OptionsContainer>
+        </Content>
+      </PageTransition>
     </Wrapper>
   );
 
