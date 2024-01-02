@@ -143,18 +143,6 @@ export default function InputMenu({
               bottom: 0
             }
           : {})
-      },
-      exit: {
-        y: action === "pop" ? "100%" : "-10%",
-        zIndex: action === "pop" ? 1 : -1,
-        transition,
-        ...(action === "pop"
-          ? {
-              right: 0,
-              left: 0,
-              bottom: 0
-            }
-          : {})
       }
     };
 
