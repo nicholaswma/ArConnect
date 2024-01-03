@@ -25,6 +25,7 @@ import Collectibles from "~routes/popup/collectibles";
 import Collectible from "~routes/popup/collectible/[id]";
 import Transaction from "~routes/popup/transaction/[id]";
 import Recipient from "~routes/popup/send/recipient";
+import { NavigationBar } from "~components/popup/Navigation";
 
 export default function Popup() {
   const theme = useTheme();
