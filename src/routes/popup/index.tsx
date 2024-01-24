@@ -61,7 +61,7 @@ export default function Home() {
         <>
           <BuyButton padding={true} route={"/purchase"} logo={true} />
           <Tokens />
-          <Collectibles />
+          {/* <Collectibles /> */}
         </>
       )) || <NoBalance />}
       <AnalyticsConsent />
