@@ -4,9 +4,16 @@ const config = {
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
     [
+      "@semantic-release/npm",
+      {
+        npmPublish: false,
+        tarballDir: false
+      }
+    ],
+    [
       "@semantic-release/git",
       {
-        assets: ["package.json"],
+        assets: ["package.json"], // Ensure package.json is included as an asset
         message:
           "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
       }
