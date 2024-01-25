@@ -12,8 +12,11 @@ jobs:
       - name: Display original package.json name
         run: cat package.json | jq '.displayName'
 
-      - name: Modify package.json name
-        run: jq '.displayName = "ArConnect BETA"' package.json > package.json.tmp && mv package.json.tmp package.json
+      - name: Modify package.json for BETA
+        if: github.ref == 'refs/heads/production'
+        run: |
+          jq '.displayName = "ArConnect BETA"' package.json > temp.json
+          mv temp.json package.json
 
       - name: Display modified package.json name
         run: cat package.json | jq '.displayName'
