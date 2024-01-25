@@ -1,0 +1,19 @@
+name: Modify and Verify Package Name
+
+on: workflow_dispatch
+
+jobs:
+  modify-package-json:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Display original package.json name
+        run: cat package.json | jq '.name'
+
+      - name: Modify package.json name
+        run: jq '.name = "ArConnect BETA"' package.json > package.json.tmp && mv package.json.tmp package.json
+
+      - name: Display modified package.json name
+        run: cat package.json | jq '.name'
