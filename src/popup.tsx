@@ -45,7 +45,7 @@ export default function Popup() {
         <Wrapper>
           <Router hook={useHashLocation}>
             <HistoryProvider>
-              {/* <Route path="/" component={Home} /> */}
+              <Route path="/" component={Home} />
               <Route path="/purchase" component={Purchase} />
               <Route path="/confirm-purchase" component={ConfirmPurchase} />
               <Route path="/purchase-pending" component={PendingPurchase} />
