@@ -31,7 +31,7 @@ jobs:
       - name: Create New Branch
         run: |
           PACKAGE_VERSION=$(jq -r '.version' package.json)
-          VERSION_BRANCH="release-$PACKAGE_VERSION
+          VERSION_BRANCH="release-$PACKAGE_VERSION"
           echo "VERSION_BRANCH=$VERSION_BRANCH" >> $GITHUB_ENV
           git checkout -b $VERSION_BRANCH
         shell: /usr/bin/bash -e {0}
