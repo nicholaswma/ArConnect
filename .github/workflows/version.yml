@@ -1,0 +1,48 @@
+name: Finalize Versioning and Open PR to Production
+
+on:
+  workflow_dispatch:
+
+jobs:
+  version-and-create-pr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # Ensure full git history
+
+      - uses: actions/setup-node@v4.0.1
+        with:
+          node-version: "20"
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Changeset Version
+        run: npx changeset version
+
+      - name: Configure Git
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email github-actions[bot]@users.noreply.github.com
+
+      - name: Create New Branch
+        run: |
+          VERSION_BRANCH="release-$(date +%Y-%m-%d-%H-%M-%S)"
+          git checkout -b $VERSION_BRANCH
+
+      - name: Commit and Push Changes
+        run: |
+          git add .
+          git commit -m "chore: apply changeset versions"
+          git push origin HEAD
+
+      - name: Open PR to Production
+        uses: repo-sync/pull-request@v2
+        with:
+          source_branch: "${{ env.VERSION_BRANCH }}"
+          destination_branch: "production"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          pr_title: "Release: ${{ env.VERSION_BRANCH }}"
+          pr_body: "This PR includes version and changelog updates for the new release."
