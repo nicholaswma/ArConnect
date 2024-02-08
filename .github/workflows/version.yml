@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          fetch-depth: 0 # Ensure full git history
+          fetch-depth: 0 # Ensure full git history is fetched
 
       - uses: actions/setup-node@v4.0.1
         with:
@@ -30,12 +30,10 @@ jobs:
 
       - name: Create New Branch
         run: |
-          echo "VERSION_BRANCH=release-$(date +%Y-%m-%d-%H-%M-%S)" >> $GITHUB_ENV
-          git checkout -b ${{ env.VERSION_BRANCH }}
-
-      - name: Verify New Branch
-        run: |
-          echo "Current Branch: $(git branch --show-current)"
+          VERSION_BRANCH="release-$(date +%Y-%m-%d-%H-%M-%S)"
+          echo "VERSION_BRANCH=$VERSION_BRANCH" >> $GITHUB_ENV
+          git checkout -b $VERSION_BRANCH
+        shell: /usr/bin/bash -e {0}
 
       - name: Commit and Push Changes
         run: |
@@ -51,5 +49,3 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           pr_title: "Release: ${{ env.VERSION_BRANCH }}"
           pr_body: "This PR includes version and changelog updates for the new release."
-        env:
-          VERSION_BRANCH: ${{ env.VERSION_BRANCH }}
