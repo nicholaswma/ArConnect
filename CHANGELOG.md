@@ -1,5 +1,15 @@
 # arconnect
 
+## 1.8.0
+
+### Minor Changes
+
+- af30ab4: testing
+
+### Patch Changes
+
+- af30ab4: test
+
 ## 1.7.0
 
 ### Minor Changes
