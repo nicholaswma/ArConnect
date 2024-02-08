@@ -48,7 +48,7 @@ export default function Popup() {
               <Route path="/" component={Home} />
               <Route path="/purchase" component={Purchase} />
               <Route path="/confirm-purchase" component={ConfirmPurchase} />
-              <Route path="/purchase-pending" component={PendingPurchase} />
+              {/* <Route path="/purchase-pending" component={PendingPurchase} /> */}
               <Route path="/receive" component={Receive} />
               <Route path="/send/transfer/:id?">
                 {(params: { id?: string }) => <Send id={params?.id} />}

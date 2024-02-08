@@ -122,7 +122,9 @@ export default function Explore() {
               browser.tabs.create({ url: "https://app.ardrive.io" })
             }
           >
-            <img src={arDriveLogo} alt={"ArDrive"} draggable={false} />
+            <>
+              <img src={arDriveLogo} alt={"ArDrive"} draggable={false} />
+            </>
           </AppShortcut>
           <AppShortcut
             color="#1a1717"
