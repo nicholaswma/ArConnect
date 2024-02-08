@@ -30,14 +30,18 @@ jobs:
 
       - name: Create New Branch
         run: |
-          VERSION_BRANCH="release-$(date +%Y-%m-%d-%H-%M-%S)"
-          git checkout -b $VERSION_BRANCH
+          echo "VERSION_BRANCH=release-$(date +%Y-%m-%d-%H-%M-%S)" >> $GITHUB_ENV
+          git checkout -b ${{ env.VERSION_BRANCH }}
+
+      - name: Verify New Branch
+        run: |
+          echo "Current Branch: $(git branch --show-current)"
 
       - name: Commit and Push Changes
         run: |
           git add .
           git commit -m "chore: apply changeset versions"
-          git push origin HEAD
+          git push origin ${{ env.VERSION_BRANCH }}
 
       - name: Open PR to Production
         uses: repo-sync/pull-request@v2
@@ -47,3 +51,5 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           pr_title: "Release: ${{ env.VERSION_BRANCH }}"
           pr_body: "This PR includes version and changelog updates for the new release."
+        env:
+          VERSION_BRANCH: ${{ env.VERSION_BRANCH }}
