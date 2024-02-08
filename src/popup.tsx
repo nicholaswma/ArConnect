@@ -51,7 +51,7 @@ export default function Popup() {
               {/* <Route path="/purchase-pending" component={PendingPurchase} /> */}
               <Route path="/receive" component={Receive} />
               <Route path="/send/transfer/:id?">
-                {(params: { id?: string }) => <Send id={params?.id} />}
+                {/* {(params: { id?: string }) => <Send id={params?.id} />} */}
               </Route>
               <Route path="/send/auth/:tokenID?">
                 {(params: { tokenID: string }) => (
