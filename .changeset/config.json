@@ -6,7 +6,7 @@
   "linked": [],
   "registry": "http://localhost:3000",
   "access": "restricted",
-  "baseBranch": "main",
+  "baseBranch": "production",
   "updateInternalDependencies": "patch",
   "ignore": []
 }
