@@ -1,5 +1,12 @@
 # arconnect
 
+## 1.9.0
+
+### Minor Changes
+
+- 7ae6e42: something
+- f0003eb: changed somehting
+
 ## 1.8.0
 
 ### Minor Changes
